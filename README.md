@@ -22,3 +22,6 @@ The input to this algorithm is a ciphertext C = C1, C2, C3 and the SecretKey a. 
  - Compute K = Bin(K'), where Bin(K') turns K' into binary
  - Compute F = AES.Dec(C1, K) [using pycrypto]
  - output F
+
+Python version : 2.7.6
+Linux distribution : Ubuntu 14.04.1 LTS

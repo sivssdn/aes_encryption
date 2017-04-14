@@ -19,6 +19,7 @@ def decrypt_file(key, in_filename, out_filename=None, chunksize=24*1024):
     with open(in_filename, 'rb') as infile:
         origsize = struct.unpack('<Q', infile.read(struct.calcsize('Q')))[0]
         iv = infile.read(16)
+
         decryptor = AES.new(key, AES.MODE_CBC, iv)
 
         with open(out_filename, 'wb') as outfile:
@@ -29,23 +30,37 @@ def decrypt_file(key, in_filename, out_filename=None, chunksize=24*1024):
                 outfile.write(decryptor.decrypt(chunk))
 
             outfile.truncate(origsize)
-def modexp( base, exp, modulus ):
-        return pow(base, exp, modulus)
 def decryption():
-	filec2 = open("cipher2.txt","r")
-	filec3 = open("cipher3.txt","r")
-	secretfile = open("secretkey.txt","r")
-	cipher2 = int(filec2.readline())
-	cipher3 = int(filec3.readline())
-	p = int(secretfile.readline())
-	a = int(secretfile.readline())
-	
-	cipher2dash = modexp(cipher2,a,p)
-	kdash = (cipher3*modexp(cipher2dash,p-2,p))%p
-	print(kdash)
-	k="{0:b}".format(int(kdash))
+	print("Decrypting from file named 'cipherFile' ")
+	fileobj = open("cipherFile","r")
+	cipher2 = long(fileobj.readline())
+	cipher3 = long(fileobj.readline())
+	outputFilename = 'decrypted_'+fileobj.readline().rstrip()
 
-	#decrypt_file(k, "cipher1.txt", "result.txt",24*1024)
+	#filec2 = open("cipher2.txt","r")
+	#filec3 = open("cipher3.txt","r")
+	secretfile = open("secretkey.txt","r")
+	#cipher2 = long(filec2.readline())
+	#cipher3 = long(filec3.readline())
+	p = long(secretfile.readline())
+	a = long(secretfile.readline())
+	
+	cipher2dash = squareAndMultiply(cipher2,a,p)
+	kdash = (cipher3*squareAndMultiply(cipher2dash,p-2,p))%p
+
+	k=str(hex(kdash))
+	k=k[2:-1] #striping character from hex string
+	#print(k)
+
+#now we have the key, copy the encrypted file to temp file without cipher2 and cipher3 and then decrypt
+	tmp = open("temp.enc","wb")
+	for line in fileobj:
+		tmp.write(line)
+	tmp.close()
+	decrypt_file(k, "temp.enc",outputFilename)
+	os.remove("temp.enc")
+	print(" \n Decrypted file stored as : ",outputFilename)
+
 def squareAndMultiply(x,c,n):
 	z=1
 	#getting value of l by converting c into binary representation and getting its length

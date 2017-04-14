@@ -29,7 +29,6 @@ def keyGeneration():
 		#p1=generateLargePrime(150)
 		p1=generateLargePrime(150)
 		p2=generateLargePrime(150)
-		print(len(str(p1)))
 		p=(p1*p2*2)+1
 		
 		#x = isPrime(p)
@@ -46,16 +45,31 @@ def keyGeneration():
 				#if(((g**(p1*p2)-1)%p != 0) and ((g**(p1*2)-1)%p != 0) and ((g**(2*p2)-1)%p != 0)):
 				if not (modexp(g, (p-1)//2,p) == 1):
 					if not (modexp(g, (p-1)//p1, p) == 1):
+						if not (modexp(g, (p-1)//p2, p) == 1):	
+							y=True
+							#we have g now
+							a = random.randint(2, p-2)
+							#h as per question var names
+							hh = squareAndMultiply(g,a,p)
+							print("p = ", p)
+							print("g = ",g)
+							print("h = ",hh)
+							print("a = ",a)
+							#write to file key.txt
+							file = open("key.txt",'w')
+
+							file.write(str(p))
+							file.write("\n")
+							file.write(str(g))
+							file.write("\n")
+							file.write(str(hh))
+							file.write("\n")
 						
-						y=True
-						#we have g now
-						a = random.randint(2, p-2)
-						#h as per question var names
-						hh = squareAndMultiply(g,a,p)
-						print("p = ", p)
-						print("g = ",g)
-						print("h = ",hh)
-						print("a = ",a)
-						#write to file key.txt
+							secretfile = open("secretkey.txt",'w')
+							secretfile.write(str(p))
+							secretfile.write("\n")
+							secretfile.write(str(a))
+
+							print("p,g,h key stored at key.txt and secret key at secretkey.txt")			
 					
 keyGeneration()
